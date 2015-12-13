@@ -18,8 +18,11 @@
  ****************************************************************/
 package org.apache.jsieve.mailet;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.james.mailbox.store.search.MessageSearcher;
 import org.apache.james.mime4j.dom.address.AddressList;
 import org.apache.james.mime4j.dom.address.Mailbox;
 import org.apache.james.mime4j.dom.address.MailboxList;
@@ -41,7 +44,6 @@ import org.apache.mailet.MailetContext;
 import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -80,8 +82,6 @@ public class SieveMailAdapter implements MailAdapter, EnvelopeAccessors, ActionC
     
     private final Poster poster;
 
-    private String contentText;
-    
     /**
      * Constructor for SieveMailAdapter.
      * 
@@ -340,7 +340,6 @@ public class SieveMailAdapter implements MailAdapter, EnvelopeAccessors, ActionC
     protected void setMail(Mail mail)
     {
         fieldMail = mail;
-        contentText = null;
     }
     
     /**
@@ -431,17 +430,54 @@ public class SieveMailAdapter implements MailAdapter, EnvelopeAccessors, ActionC
         getMailetContext().sendMail(sender, recipients, mail);
     }
 
-
-    public boolean isInBodyText(String phraseCaseInsensitive) throws SieveMailException {
+    public boolean isInBodyText(List<String> phrasesCaseInsensitive) throws SieveMailException {
         try {
-            if (contentText == null) {
-                contentText = getMessage().getContent().toString().toLowerCase();
-            }
-            return contentText.contains(phraseCaseInsensitive);
-        } catch (MessagingException e) {
-            throw new SieveMailException(e);
-        } catch (IOException e) {
-            throw new SieveMailException(e);
+            return new MessageSearcher(
+                Lists.transform(phrasesCaseInsensitive, new Function<String, CharSequence>() {
+                    public CharSequence apply(String s) {
+                        return s;
+                    }
+                }),
+                false,
+                false,
+                Lists.newArrayList("text/plain"))
+                .isFoundIn(getMail().getMessage().getInputStream());
+        } catch (Exception e) {
+            throw new SieveMailException("Error searching in the mail content", e);
+        }
+    }
+
+    public boolean isInBodyRaw(List<String> phrasesCaseInsensitive) throws SieveMailException {
+        try {
+            return new MessageSearcher(
+                Lists.transform(phrasesCaseInsensitive, new Function<String, CharSequence>() {
+                    public CharSequence apply(String s) {
+                        return s;
+                    }
+                }),
+                false,
+                false,
+                Lists.<String>newArrayList())
+                .isFoundInIgnoringMime(getMail().getMessage().getInputStream());
+        } catch (Exception e) {
+            throw new SieveMailException("Error searching in the mail content", e);
+        }
+    }
+
+    public boolean isInBodyContent(List<String> contentTypes, List<String> phrasesCaseInsensitive) throws SieveMailException {
+        try {
+            return new MessageSearcher(
+                Lists.transform(phrasesCaseInsensitive, new Function<String, CharSequence>() {
+                    public CharSequence apply(String s) {
+                        return s;
+                    }
+                }),
+                false,
+                false,
+                contentTypes)
+                .isFoundIn(getMail().getMessage().getInputStream());
+        } catch (Exception e) {
+            throw new SieveMailException("Error searching in the mail content", e);
         }
     }
 

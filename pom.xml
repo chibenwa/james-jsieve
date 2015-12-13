@@ -87,6 +87,10 @@
         <geronimo-activation.version>1.1</geronimo-activation.version>
         <geronimo-javamail.version>1.8.3</geronimo-javamail.version>
         <commons-io.version>2.1</commons-io.version>
+        <mockito-core.version>1.9.0</mockito-core.version>
+        <assertj.version>1.7.1</assertj.version>
+        <mailbox.version>0.6-SNAPSHOT</mailbox.version>
+        <guava.version>16.0</guava.version>
     </properties>
 
     <dependencyManagement>
@@ -109,31 +113,6 @@
             <dependency>
                 <groupId>org.apache.james</groupId>
                 <artifactId>apache-jsieve-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.james</groupId>
-                <artifactId>apache-jsieve-manager-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.james</groupId>
-                <artifactId>apache-jsieve-manager-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.james</groupId>
-                <artifactId>apache-jsieve-manager-jsieve</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.james</groupId>
-                <artifactId>apache-jsieve-manager-mailet</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.james</groupId>
-                <artifactId>apache-jsieve-manager-mock</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -171,6 +150,11 @@
                 <groupId>org.apache.james</groupId>
                 <artifactId>apache-mime4j-dom</artifactId>
                 <version>${mime4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
@@ -237,6 +221,12 @@
                 <groupId>org.apache.geronimo.javamail</groupId>
                 <artifactId>geronimo-javamail_1.4_mail</artifactId>
                 <version>${geronimo-javamail.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito-core.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
