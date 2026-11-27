@@ -119,6 +119,13 @@ public class ScriptCheckMailAdapterTest {
     }
 
     @Test
+    public void getMatchingHeaderShouldReturnEveryCaseSpellingWhenTheMailHoldsAllOfThem() throws Exception {
+        ScriptCheckMailAdapter testee = adapterFor("X: 1\r\nx: 2\r\n\r\nbody\r\n");
+
+        assertThat(testee.getMatchingHeader("x")).containsExactlyInAnyOrder("1", "2");
+    }
+
+    @Test
     public void getHeaderShouldReturnOnlyTheFieldsWithTheExactName() throws Exception {
         ScriptCheckMailAdapter testee = adapterFor("From: a@example.com\r\nFROM: b@example.com\r\n\r\nbody\r\n");
 
